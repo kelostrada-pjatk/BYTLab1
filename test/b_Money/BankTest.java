@@ -51,6 +51,7 @@ public class BankTest {
     @Test
     public void testDeposit() throws AccountDoesNotExistException {
         SweBank.deposit("Bob", new Money(1000, SEK));
+        assertEquals(1000, (long)SweBank.getBalance("Bob"));
         exception.expect(AccountDoesNotExistException.class);
         SweBank.deposit("Alice", new Money(1000, SEK));
     }
@@ -58,6 +59,7 @@ public class BankTest {
     @Test
     public void testWithdraw() throws AccountDoesNotExistException {
         SweBank.withdraw("Bob", new Money(1000, SEK));
+        assertEquals(-1000, (long)SweBank.getBalance("Bob"));
         exception.expect(AccountDoesNotExistException.class);
         SweBank.withdraw("Alice", new Money(1000, SEK));
     }
@@ -72,14 +74,18 @@ public class BankTest {
     @Test
     public void testTransfer() throws AccountDoesNotExistException {
         SweBank.transfer("Bob", "Ulrika", new Money(1000, SEK));
+        assertEquals(-1000, (long)SweBank.getBalance("Bob"));
+        assertEquals(1000, (long)SweBank.getBalance("Ulrika"));
         exception.expect(AccountDoesNotExistException.class);
         SweBank.transfer("Bob", "Alice", new Money(1000, SEK));
     }
 
     @Test
     public void testTimedPayment() throws AccountDoesNotExistException {
-        SweBank.addTimedPayment("Bob", "Telephone", 10, 3, new Money(1000, SEK), SweBank, "Ulrika");
+        SweBank.addTimedPayment("Bob", "Telephone", 2, 0, new Money(1000, SEK), SweBank, "Ulrika");
+        SweBank.tick();
+        assertEquals(0, (long)SweBank.getBalance("Bob"));
         exception.expect(AccountDoesNotExistException.class);
-        SweBank.addTimedPayment("Bob", "Telephone", 10, 3, new Money(1000, SEK), SweBank, "Alice");
+        SweBank.addTimedPayment("Bob", "Telephone", 1, 3, new Money(1000, SEK), SweBank, "Alice");
     }
 }

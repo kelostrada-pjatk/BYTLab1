@@ -61,6 +61,8 @@ public class MoneyTest {
         assertEquals(EUR20, EUR10.add(SEK100));
         assertEquals(EUR20, EUR10.add(EUR10));
         assertEquals(SEK200, SEK100.add(SEK100));
+        Money money = SEK200.add(SEK100);
+        assertTrue(money.getAmount().equals(new Money(30000, SEK).getAmount()));
     }
 
     @Test
